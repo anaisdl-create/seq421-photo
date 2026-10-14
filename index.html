@@ -26,8 +26,7 @@
   la comédienne sur la conversation ou au clavier Bluetooth (espace, flèche
   droite, Entrée). R = retour au début.
 
-  LES PHOTOS PRISES sont téléchargées sur le téléphone au retour au début
-  (jamais pendant la prise : la barre de téléchargement se verrait).
+  LES PHOTOS PRISES ne sont pas enregistrées sur le téléphone.
 -->
 <style>
   :root {
@@ -233,7 +232,6 @@ let photosEnvoyees = 0;
 let reponsesDonnees = 0;
 let flux = null;
 let photoJointe = null;       // { url, blob }
-const photosAGarder = [];     // à télécharger au retour au début (hors appli Android)
 
 // --- Habillage ---
 $('heure').textContent = REGLAGES.heure;  // vide = rien
@@ -309,7 +307,6 @@ const sonDeclencheur = () => bip([2400], 0.04, 0.1);
 // --- Déroulé ---
 function remettreAZero() {
   couperCamera();
-  garderLesPhotos();
   photoJointe = null;
   photosEnvoyees = 0;
   reponsesDonnees = 0;
@@ -387,7 +384,6 @@ function envoyer() {
   if (!photoJointe) return;
   bullePhoto(photoJointe.url);
   sonEnvoi();
-  enregistrer(photoJointe.blob);
   photoJointe = null;
   viderBarre();
   photosEnvoyees++;
@@ -416,41 +412,6 @@ function avancer() {
     case 'conversation': reponse(); break;
     case 'jointe': envoyer(); break;
   }
-}
-
-// --- Garder la photo ---
-function nomPhoto() {
-  const d = new Date(), z = n => String(n).padStart(2, '0');
-  return `seq${REGLAGES.sequence}-${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}`;
-}
-
-/** L'appli Cinéanim Android range la photo en silence ; ailleurs, on attend le retour au début. */
-function enregistrer(blob) {
-  const nom = nomPhoto();
-  const pont = window.CineanimAndroid || (window.parent && window.parent.CineanimAndroid);
-  if (pont && pont.enregistrerPhoto) {
-    const lecteur = new FileReader();
-    lecteur.onload = () => {
-      let ok = false;
-      try { ok = pont.enregistrerPhoto(String(lecteur.result).split(',')[1], nom); } catch {}
-      if (!ok) photosAGarder.push({ blob, nom });
-    };
-    lecteur.readAsDataURL(blob);
-  } else {
-    photosAGarder.push({ blob, nom });
-  }
-}
-
-function garderLesPhotos() {
-  // Une à une, espacées : Chrome ignore des téléchargements lancés tous ensemble.
-  photosAGarder.splice(0).forEach(({ blob, nom }, i) => setTimeout(() => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = nom + '.jpg';
-    document.body.append(a);
-    a.click();
-    a.remove();
-  }, i * 600));
 }
 
 // --- Touchers ---
