@@ -1,7 +1,8 @@
 {
   "name": "Séquence 421",
   "short_name": "Séq 421",
-  "start_url": "./index.html",
+  "id": "/seq421-photo/app-v2",
+  "start_url": "./index.html?app=2",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "portrait",
