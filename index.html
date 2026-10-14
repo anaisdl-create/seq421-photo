@@ -31,6 +31,8 @@
 -->
 <style>
   :root {
+    --marge-haut: 0px;
+    --marge-bas: 24px;
     --fond: #000;
     --texte: #fff;
     --texte-doux: rgba(255, 255, 255, 0.55);
@@ -60,7 +62,7 @@
   #conversation { background: var(--fond); }
   .barre-etat {
     display: flex; justify-content: space-between; align-items: center;
-    padding: calc(env(safe-area-inset-top, 0px) + 10px) 22px 4px;
+    padding: calc(var(--marge-haut) + 10px) 22px 4px;
     font-size: 14px; font-weight: 500;
   }
   .barre-etat .droite { display: flex; gap: 6px; align-items: center; }
@@ -98,7 +100,7 @@
 
   .saisie {
     display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    padding: 8px 10px calc(var(--marge-bas) + 12px);
   }
   .rond {
     width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
@@ -129,12 +131,12 @@
   .viseur { position: relative; flex: 1; overflow: hidden; }
   .viseur video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .eclair { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
-  .fermer { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 14px; background: rgba(0, 0, 0, 0.4); }
+  .fermer { position: absolute; top: calc(var(--marge-haut) + 14px); right: 14px; background: rgba(0, 0, 0, 0.4); }
   .eclair.flash { animation: flash 0.25s ease-out; }
   @keyframes flash { from { opacity: 0.85; } to { opacity: 0; } }
   .commandes {
     display: flex; align-items: center; justify-content: space-around;
-    padding: 20px 24px calc(env(safe-area-inset-bottom, 0px) + 30px);
+    padding: 20px 24px calc(var(--marge-bas) + 30px);
   }
   .commandes .rond { width: 46px; height: 46px; background: rgba(255, 255, 255, 0.15); }
   .declencheur {
@@ -207,6 +209,10 @@ const REGLAGES = {
   couleurPastille: '#2e7d5b',
   heure: '',                  // '' = pas d'heure affichée
   batterie: 64,               // en %
+  // Placement à l'écran, en pixels : augmenter margeHaut descend le réseau et la
+  // batterie ; augmenter margeBas remonte la barre de message.
+  margeHaut: 0,
+  margeBas: 24,
   // Ce qui est déjà dans la conversation quand elle s'ouvre (peut rester vide : []).
   // de: 'lui' = bulle grise de Randal ; de: 'elle' = bulle bleue de Justine.
   dejaAffiches: [],
@@ -231,6 +237,8 @@ const photosAGarder = [];     // à télécharger au retour au début (hors appl
 
 // --- Habillage ---
 $('heure').textContent = REGLAGES.heure;  // vide = rien
+document.documentElement.style.setProperty('--marge-haut', REGLAGES.margeHaut + 'px');
+document.documentElement.style.setProperty('--marge-bas', REGLAGES.margeBas + 'px');
 $('jauge').setAttribute('width', String(Math.max(1, 19 * REGLAGES.batterie / 100)));
 $('pastille').textContent = REGLAGES.contact.charAt(0).toUpperCase();
 $('pastille').style.background = REGLAGES.couleurPastille;
