@@ -205,7 +205,7 @@
 const REGLAGES = {
   contact: 'Randal',
   couleurPastille: '#2e7d5b',
-  heure: '16:20',
+  heure: '',                  // '' = pas d'heure affichée
   batterie: 64,               // en %
   // Ce qui est déjà dans la conversation quand elle s'ouvre (peut rester vide : []).
   // de: 'lui' = bulle grise de Randal ; de: 'elle' = bulle bleue de Justine.
@@ -230,7 +230,7 @@ let photoJointe = null;       // { url, blob }
 const photosAGarder = [];     // à télécharger au retour au début (hors appli Android)
 
 // --- Habillage ---
-$('heure').textContent = REGLAGES.heure;
+$('heure').textContent = REGLAGES.heure;  // vide = rien
 $('jauge').setAttribute('width', String(Math.max(1, 19 * REGLAGES.batterie / 100)));
 $('pastille').textContent = REGLAGES.contact.charAt(0).toUpperCase();
 $('pastille').style.background = REGLAGES.couleurPastille;
